@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link href="{% static "login/stylelogin.css" %}" rel="stylesheet">
+    <title>Entrar | CorrAut</title>
+</head>
+<body>
+    <header>
+        <img src="{% static "login/imagens/logo-corraut.png" %}" alt="logo do corraut">
+    </header>
+
+    <form class="form-container" enctype="multipart/form-data" action="/checar/" method="POST"> 
+        {% csrf_token %} 
+        <h1>Login</h1>
+        <div class="label-input">
+            <label>Usuário</label>
+            <input type="text" name="usuário">
+        </div>
+        <div class="label-input">
+            <label>Senha</label>
+            <input type="password" name="senha">
+        </div>
+            <button value="entrar" type="submit">Entrar</button>
+        <p style="color:rgb(247, 31, 31); font-size: 10pt;">{{msgErro}}</p>
+    </form>
+
+</body>
+</html>
