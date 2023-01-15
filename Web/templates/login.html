@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link href="{% static "login/stylelogin.css" %}" rel="stylesheet">
+    <script src="{% static "login/script.js" %}"></script>
     <title>Entrar | CorrAut</title>
 </head>
 <body>
@@ -22,10 +23,11 @@
         </div>
         <div class="label-input">
             <label>Senha</label>
-            <input type="password" name="senha">
+            <input type="password" name="senha" id="senha">
         </div>
+
             <button value="entrar" type="submit">Entrar</button>
-        <p style="color:rgb(247, 31, 31); font-size: 10pt;">{{msgErro}}</p>
+        <p style="color:rgb(247, 31, 31); font-size: 10pt; text-align: center; font-weight: 600px;">{{msgErro}}</p>
     </form>
 
 </body>
