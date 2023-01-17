@@ -11,9 +11,10 @@ def login(request):
         if "erro" in request.GET.keys():
             erros = {
                 "1": "Credenciais incorretas, verifique-as e tente novamente.",
-                "2": "IP não adicionado, fale com um administrador.",
+                "2": "IP bloqueado, fale com um administrador.",
                 "3": "Conecte-se à internet e tente novamente.",
-                "4": "Algo deu errado, tente novamente."
+                "4": "Algo deu errado, tente novamente.",
+                "5": "Usuário / senha não podem estar vazios!"
             }
             erro = erros[request.GET["erro"]]
             return render(request, 'login.html', {"msgErro":erro})
@@ -26,22 +27,30 @@ def turmas(request):
     try:
         type(usuario)
         usuárioDados = db.Usuários.find({"usuário":usuario})[0]
+        ícones = {
+            "Turismo":"fa-solid fa-plane",
+            "Enfermagem":"fa-solid fa-heart-pulse",
+            "Informática":"fa-solid fa-computer",
+            "Agroindústria":"fa-solid fa-tractor",
+            "Vestuário": "fa-solid fa-shirt"
+        }
         turmas = []
         if usuárioDados['turmas'] != ["*"]:
             for t in db.Turmas.find().sort([("série", pymongo.ASCENDING)]):
                 tAtual = f"{t['curso']} {t['série']}"
                 if tAtual in usuárioDados['turmas']:
-                    turmas.append({"curso": t['curso'], "série": t['série'], "add": "enabled"})
+                    turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']], "add": "enabled"})
                 else:
-                    turmas.append({"curso": t['curso'], "série": t['série'], "add": "disabled"})
+                    turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']], "add": "disabled"})
         else:
             for t in db.Turmas.find().sort([("série", pymongo.ASCENDING)]):
-                turmas.append({"curso": t['curso'], "série": t['série'], "add": ""})
+                turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']],"add": ""})
 
         return render(request, "turmas.html", {'usuario':usuario, '1º':turmas[0:4], "2º":turmas[4:8], "3º":turmas[8:12]})
     except Exception as e:
         print(repr(e))
         return HttpResponseRedirect(f'/login/?erro=4')
+
 
 def checar(request):
     global db, usuario

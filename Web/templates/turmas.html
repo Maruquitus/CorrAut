@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link href="{% static "turmas/styleturmas.css" %}" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/11bac70e77.js" crossorigin="anonymous"></script>
     <title>Turmas | CorrAut</title>
     <style>
         body {
@@ -26,21 +27,28 @@
             <div class="série">
                 <h1>1º Ano</h1>
                 {% for turma in 1º %}
-                <button {{turma.add}}><h2>{{turma.curso}}</h2></button>
+                <button {{turma.add}} class="botao{{turma.curso}}">
+                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+                </button>
                 {% endfor %}
             </div>
     
             <div class="série" >
                 <h1>2º Ano</h1>
                 {% for turma in 2º %}
-                <button {{turma.add}}><h2>{{turma.curso}}</h2></button>
+                
+                <button {{turma.add}} class="botao{{turma.curso}}">
+                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+                    </button>
                 {% endfor %}
             </div>
-        
+            
             <div class="série">
                 <h1>3º Ano</h1>
                 {% for turma in 3º %}
-                <button {{turma.add}}><h2>{{turma.curso}}</h2></button>
+                <button {{turma.add}} class="botao{{turma.curso}}">
+                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+                </button>
                 {% endfor %}
             </div>
         </div>

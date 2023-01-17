@@ -10,25 +10,40 @@
     <title>Entrar | CorrAut</title>
 </head>
 <body>
-    <header>
-        <img src="{% static "login/imagens/logo-corraut.png" %}" alt="logo do corraut">
-    </header>
+    <div id="hide">
+        <header>
+            <img src="{% static "login/imagens/logo-corraut.png" %}" alt="logo do corraut">
+        </header>
+    
+        <form class="form-container" enctype="multipart/form-data" action="/checar/" method="POST"> 
+            {% csrf_token %} 
+            <h1>Login</h1>
+            <div class="label-input">
+                <label>Usuário</label>
+                <input type="text" name="usuário" id="usuário" onkeyup="ativacaoBotao()">
+            </div>
+            <div class="label-input">
+                <label>Senha</label>
+                <input type="password" name="senha" id="senha" onkeyup="ativacaoBotao()">
+            </div>
+    
+            <div class="exibirSenha">
+                <label for="mostrador" id="Most">
+                    <input type="checkbox" id="mostrador" class="styled-checkbox" onclick="Função()"> Mostrar senha
+                </label>
+            </div>
+            
+            <button value="entrar" type="submit" onclick="Entrar()" id="entrar" disabled>Entrar</button>
+            <p style="color:rgb(247, 31, 31); font-size: 10pt; text-align: center; font-weight: 600px;">{{msgErro}}</p>
+        </form>
+    </div>
 
-    <form class="form-container" enctype="multipart/form-data" action="/checar/" method="POST"> 
-        {% csrf_token %} 
-        <h1>Login</h1>
-        <div class="label-input">
-            <label>Usuário</label>
-            <input type="text" name="usuário">
+    <div class="load-div-container" id="load-div-container">
+        <div class="load-div" id="load-div">
+            <span class="loader"></span>
         </div>
-        <div class="label-input">
-            <label>Senha</label>
-            <input type="password" name="senha" id="senha">
-        </div>
-
-            <button value="entrar" type="submit">Entrar</button>
-        <p style="color:rgb(247, 31, 31); font-size: 10pt; text-align: center; font-weight: 600px;">{{msgErro}}</p>
-    </form>
-
+    </div>
+    
+    
 </body>
 </html>

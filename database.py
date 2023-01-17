@@ -1,5 +1,5 @@
 from pymongo import MongoClient
-from pymongo.errors import OperationFailure, ServerSelectionTimeoutError, ConfigurationError
+from pymongo.errors import OperationFailure, ServerSelectionTimeoutError, InvalidURI, ConfigurationError
 import urllib.parse
 from pymongo.server_api import ServerApi
 import urllib.request
@@ -15,20 +15,27 @@ def conectar(usuário, senha):
     temInternet = testarInternet()
 
     if temInternet:
-        client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
-        db = client.Database
-
-        "OperationFailure" #Credenciais erradas
-        "ServerSelectionTimeoutError" #IP não adicionado
-        #"ConfigurationError" #Sem internet
-
         try:
-            print(db.Alunos.list_indexes())
-            return db
-        except OperationFailure:
-            return "ERRO: 1"
-        except ServerSelectionTimeoutError:
-            return "ERRO: 2"
+            client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+            db = client.Database
+
+            "OperationFailure" #Credenciais erradas
+            "ServerSelectionTimeoutError" #IP não adicionado
+            #"ConfigurationError" #Sem internet
+
+            try:
+                print(db.Alunos.list_indexes())
+                return db
+            except OperationFailure:
+                return "ERRO: 1"
+            except ServerSelectionTimeoutError:
+                return "ERRO: 2"
+            except InvalidURI:
+                return "ERRO: 5"
+        except InvalidURI:
+            return "ERRO: 5"
+        except ConfigurationError:
+            return "ERRO: 5"
         #except ConfigurationError:
             #return "ERRO: Sem internet"
     else:

@@ -11,8 +11,8 @@
 }
 
 @keyframes fadein {
-    from { opacity: 0; }
-    to   { opacity: 1; }
+    from { opacity: 0;}
+    to   { opacity: 1;}
 }
 
 /* Firefox < 16 */
@@ -38,6 +38,7 @@
     from { opacity: 0; }
     to   { opacity: 1; }
 }
+
 
 .voltar {
     font-size: 20px;
@@ -95,18 +96,37 @@ body {
     padding: 50px;
 }
 
+.botaoTurismo::before {
+    background: linear-gradient(to right top, rgb(35, 163, 18), rgb(112, 255, 69));
+}
+
+.botaoEnfermagem::before {
+    background: linear-gradient(to right top, rgb(204, 23, 23), rgb(255, 17, 17));
+}
+
+.botaoInformática::before {
+    background: linear-gradient(to right top, rgb(133, 0, 133), rgb(178, 46, 255));
+}
+
+.botaoAgroindústria::before {
+    background: linear-gradient(to right top, rgb(20, 78, 237), rgb(0, 204, 255));
+}
+
+.botaoVestuário::before {
+    background: linear-gradient(to right top, rgb(237, 20, 110), rgb(255, 0, 179));
+}
+
 button:enabled:hover::before {
     opacity: 1;
-  }
+}
 
-button::before {
+button:enabled::before {
     position: absolute;
     content: "";
     top: 0;
     right: 0;
     bottom: 0;
     left: 0;
-    background: linear-gradient(to right top, rgb(237, 172, 20), rgb(255, 102, 0));
     z-index: -1;
     transition: opacity 0.25s linear;
     opacity: 0;
@@ -122,7 +142,7 @@ button:disabled {
 button:enabled:hover {
     color: white;
     transition: 0.25s;
-    transform: scale(102%);
+    transform: scale(102.5%);
 }
 
 button {
