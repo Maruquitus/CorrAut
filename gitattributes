@@ -4,3 +4,5 @@
 *.cfg linguist-detectable=false
 *.pyc linguist-detectable=false
 *Procfile linguist-detectable=false
+/lib linguist-detectable=false
+/__pycache__ linguist-detectable=false
