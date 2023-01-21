@@ -12,8 +12,8 @@ function ativacaoBotao(){
 var func = function() {
   var senha = document.getElementById("senha");
   var usuário = document.getElementById("usuário");
-  let style = window.getComputedStyle(usuário, "")
-  let style2 = window.getComputedStyle(senha, "")
+  let style = window.getComputedStyle(usuário, "");
+  let style2 = window.getComputedStyle(senha, "");
   if (style.backgroundColor !== "rgb(245, 245, 245)" && style2.backgroundColor !== "rgb(245, 245, 245)") {
       document.getElementById("entrar").disabled = false;
   }
@@ -21,7 +21,7 @@ var func = function() {
 
 
 window.onload = function() {
-  setTimeout(func, 2000);
+  setTimeout(func, 500);
 }
 
 

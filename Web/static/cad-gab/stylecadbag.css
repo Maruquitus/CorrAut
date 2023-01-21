@@ -75,6 +75,10 @@ img {
     cursor: pointer;
 }
 
+button {
+    box-shadow: 0 0 6px rgb(216, 216, 216);
+}
+
 .btn-back:enabled:hover::before {
     opacity: 1;
 }
@@ -184,6 +188,7 @@ input[type=number]::-webkit-outer-spin-button {
     padding: 6px 14px;
     overflow-y: scroll;
     gap: 10px;
+    box-shadow: 0 0 6px rgb(216, 216, 216);
 }
 
 .row-questions {
@@ -199,3 +204,88 @@ input[type=number]::-webkit-outer-spin-button {
     margin-top: 4px;
     cursor: pointer;
 } 
+
+
+#indicador-turma:enabled:hover::before {
+    opacity: 1;
+}
+
+#indicador-turma:enabled::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: -1;
+    transition: opacity 0.25s linear;
+    opacity: 0;
+    border-radius: 6px;
+}
+
+#indicador-turma:disabled {
+    color: gray;
+    background: linear-gradient(to right top, rgb(240, 240, 240),rgb(248, 248, 248));
+    cursor: not-allowed;
+}
+
+#indicador-turma:enabled:hover {
+    color: white;
+    transition: 0.25s;
+    transform: scale(102.5%);
+    opacity: 1;
+}
+
+#indicador-turma {
+    display: flex;
+    margin-left: 10px;
+    width: 250px;
+    height: 50px;
+    position: absolute;
+    border: none;
+    box-shadow: 0 0 6px rgb(216, 216, 216);
+    padding: 12px;
+    margin-top: 10px;
+    background: linear-gradient(to right top, rgb(248, 248, 248),rgb(255, 255, 255));
+    color: rgb(43, 43, 43);
+    font-weight: 700;
+    font-weight: 700;
+    border-radius: 6px;
+    font-size: 20px;
+    align-items:center;
+    justify-content:center;
+    z-index: 1;
+    opacity: 1;
+    cursor: pointer;
+}
+
+#indicador-turma[class="Turismo"]::before {
+    background: linear-gradient(to right top, rgb(35, 163, 18), rgb(112, 255, 69));
+}
+
+#indicador-turma[class="Enfermagem"]::before {
+    background: linear-gradient(to right top, rgb(204, 23, 23), rgb(255, 17, 17));
+}
+
+#indicador-turma[class="Informática"]::before {
+    background: linear-gradient(to right top, rgb(133, 0, 133), rgb(178, 46, 255));
+}
+
+#indicador-turma[class="Agroindústria"]::before {
+    background: linear-gradient(to right top, rgb(20, 78, 237), rgb(0, 204, 255));
+}
+
+#indicador-turma[class="Vestuário"]::before {
+    background: linear-gradient(to right top, rgb(237, 20, 110), rgb(255, 0, 179));
+}
+
+.load-div-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    animation: fadein 1s;
+    background-color: white;
+    z-index: 2;
+}

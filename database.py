@@ -3,6 +3,8 @@ from pymongo.errors import OperationFailure, ServerSelectionTimeoutError, Invali
 import urllib.parse
 from pymongo.server_api import ServerApi
 import urllib.request
+import bcrypt
+
 def testarInternet(host='http://google.com'):
     try:
         urllib.request.urlopen(host)
@@ -16,12 +18,25 @@ def conectar(usuário, senha):
 
     if temInternet:
         try:
-            client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+            if usuário != "ADMIN":
+                uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+                client = MongoClient(uri,
+                        tls=True,
+                        tlsCertificateKeyFile='C:/Users/Marco/Desktop/CorrAut 2023/Github/X509-cert-5893113880491433274.pem',
+                        server_api=ServerApi('1'))
+            else:
+                client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
             db = client.Database
 
             "OperationFailure" #Credenciais erradas
             "ServerSelectionTimeoutError" #IP não adicionado
             #"ConfigurationError" #Sem internet
+
+            if usuário != "ADMIN":
+                senha = senha.encode('utf-8')
+                print(db.Usuários.find({"usuário":usuário}))
+                if not bcrypt.checkpw(senha, db.Usuários.find({"usuário":usuário})[0]['senha']):
+                    return "ERRO: 1"
 
             try:
                 print(db.Alunos.list_indexes())
@@ -55,9 +70,9 @@ def novoAluno(nome, turma):
         usuário = input("Usuário >>> ")
         senha = input("Senha >>> ")
         db = conectar(usuário, senha)
-    db.Alunos.insert_one({"nome":nome, "turma":turma, "histórico": []})
+    db.Alunos.insert_one({"nome":nome.upper(), "turma":turma.upper(), "histórico": {"1º":{}, "2º":{}, "3º": {}}})
 
-def novoUsuario(usuario):
+def novoUsuario(usuario, senha):
     global db
     try:
         print(db)
@@ -66,7 +81,15 @@ def novoUsuario(usuario):
         usuário = input("Usuário >>> ")
         senha = input("Senha >>> ")
         db = conectar(usuário, senha)
-    db.Usuários.insert_one({"usuário":usuario, "turmas": []})
+
+    senha = senha.encode('utf-8')
+    hashed = bcrypt.hashpw(senha, bcrypt.gensalt(10)) 
+    
+    db.Usuários.insert_one({"usuário":usuario.upper(), "turmas": [], "senha":hashed, "matérias": []})
+
+def atualizarUsuario(usuario, atualizar, valor):
+    global db
+    db.Usuários.update_one({"usuário":usuario}, {"$set":{atualizar:valor}})
 
 
 def novaTurma(curso, série, quantidadeAlunos):
@@ -78,4 +101,43 @@ def novaTurma(curso, série, quantidadeAlunos):
         usuário = input("Usuário >>> ")
         senha = input("Senha >>> ")
         db = conectar(usuário, senha)
-    db.Turmas.insert_one({"curso":curso, "série":série, "quantidadeAlunos": quantidadeAlunos})
+    db.Turmas.insert_one({"curso":curso.upper(), "série":série.upper(), "quantidadeAlunos": quantidadeAlunos})
+
+def atualizarTurma(turma, atualizar, valor):
+    t = turma.split()
+    db.Usuário.update_one({"curso":t[0], "série":int(t[1][0])}, {"$set":{atualizar:valor}})
+
+def atualizarNota(nome, ano, matéria, período, nota):
+    aluno = db.Alunos.find({"nome":nome.upper()})[0]
+    hist = aluno['histórico']
+    try:
+        aluno['histórico'][ano][matéria][período]
+        hist[ano][matéria][período] = nota
+
+        db.Alunos.update_one({"nome":nome.upper()}, {"$set":{"histórico":hist}})
+    except Exception as e:
+        hist[ano][matéria] = {"1º":-1, "2º":-1, "3º":-1, "4º":-1}
+        db.Alunos.update_one({"nome":nome.upper()}, {"$set":{"histórico":hist}})
+        atualizarNota(nome, ano, matéria, período, nota)
+
+
+def calcularMediaTurma(turma, anoPesquisa, matéria, período):
+    global db
+    alunos = db.Alunos.find({"turma":turma})
+    ano = anoPesquisa
+    alunosContabilizados = 0
+    soma = 0
+    for aluno in alunos:
+        nota = aluno["histórico"][ano][matéria][período]
+        if nota != -1:
+            soma += aluno["histórico"][ano][matéria][período]
+            alunosContabilizados += 1
+    try:
+        média = soma/alunosContabilizados
+    except:
+        return "ERRO: TURMA NÃO ENCONTRADA"
+    return média
+
+    
+
+    

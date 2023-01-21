@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     {% load static %}
     <link href="{% static "turmas/styleturmas.css" %}" rel="stylesheet">
+    <script src="{% static "turmas/script.js" %}"></script>
     <script src="https://kit.fontawesome.com/11bac70e77.js" crossorigin="anonymous"></script>
     <title>Turmas | CorrAut</title>
     <style>
@@ -15,42 +16,50 @@
     </style>
 </head>
 <body>
-    <a href="/login">
-        <button class="voltar">Voltar</button>
-    </a>
-
-    <div class="conteúdo">
-        <h1>Bem vindo(a) {{usuario}}</h1>
-        <h2>Essas são as suas turmas</h2>
-
-        <div class="turmas">
-            <div class="série">
-                <h1>1º Ano</h1>
-                {% for turma in 1º %}
-                <button {{turma.add}} class="botao{{turma.curso}}">
-                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
-                </button>
-                {% endfor %}
-            </div>
+    <div id="hide">
+        <a href="/login">
+            <button class="voltar"><i class="fa-solid fa-arrow-left"></i></button>
+        </a>
     
-            <div class="série" >
-                <h1>2º Ano</h1>
-                {% for turma in 2º %}
-                
-                <button {{turma.add}} class="botao{{turma.curso}}">
-                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+        <div class="conteúdo">
+            <h1>Bem vindo(a) {{usuario}}</h1>
+            <h2>Essas são as suas turmas</h2>
+    
+            <div class="turmas">
+                <div class="série">
+                    <h1>1º Ano</h1>
+                    {% for turma in 1º %}
+                    <button {{turma.add}} class="botao{{turma.curso}}" onclick="Red({{turma.id}})">
+                        <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
                     </button>
-                {% endfor %}
+                    {% endfor %}
+                </div>
+        
+                <div class="série" >
+                    <h1>2º Ano</h1>
+                    {% for turma in 2º %}
+                    
+                    <button {{turma.add}} class="botao{{turma.curso}}" onclick="Red({{turma.id}})">
+                        <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+                        </button>
+                    {% endfor %}
+                </div>
+                
+                <div class="série">
+                    <h1>3º Ano</h1>
+                    {% for turma in 3º %}
+                    <button {{turma.add}} class="botao{{turma.curso}}" onclick="Red({{turma.id}})">
+                        <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
+                    </button>
+                    {% endfor %}
+                </div>
             </div>
-            
-            <div class="série">
-                <h1>3º Ano</h1>
-                {% for turma in 3º %}
-                <button {{turma.add}} class="botao{{turma.curso}}">
-                    <h2><i class='{{turma.ícone}}'></i> {{turma.curso}}</h2>
-                </button>
-                {% endfor %}
-            </div>
+        </div>
+    </div>
+    
+    <div class="load-div-container" id="load-div-container">
+        <div class="load-div" id="load-div">
+            <span class="loader"></span>
         </div>
     </div>
     

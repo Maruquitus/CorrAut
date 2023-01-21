@@ -10,5 +10,6 @@ urlpatterns = [
     path('', views.redirect, name="redirecionar"),
     path('login/', views.login, name='login'),
     path('checar/', views.checar, name='checar'),
-    path('turmas/', views.turmas, name="turmas")
+    path('turmas/', views.turmasPag, name="turmas"),
+    path('cadastro/', views.cadgab, name="cadastroGab")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
