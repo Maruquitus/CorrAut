@@ -1,12 +1,12 @@
 * {
-    margin: 0;
     padding: 0;
+    margin: 0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    -webkit-animation: fadein 1s; /* Safari, Chrome and Opera > 12.1 */
-    -moz-animation: fadein 1s; /* Firefox < 16 */
-    -ms-animation: fadein 1s; /* Internet Explorer */
-    -o-animation: fadein 1s; /* Opera < 12.1 */
-    animation: fadein 1s;
+    -webkit-animation: fadein 0.5s; /* Safari, Chrome and Opera > 12.1 */
+       -moz-animation: fadein 0.5s; /* Firefox < 16 */
+        -ms-animation: fadein 0.5s; /* Internet Explorer */
+         -o-animation: fadein 0.5s; /* Opera < 12.1 */
+            animation: fadein 0.5s;
 }
 
 @keyframes fadein {
@@ -120,13 +120,42 @@ img {
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.3);
     padding: 14px 32px;
 }
-
 /*classe para condição se for primeiro acesso do ano ou não fez avaliação.
     - mudar para display none
 */
 .chartAcertos-container {
     display: block;
 }
+.chartAcertosDisabled-container {
+    display: none;
+}
+
+.select {
+    display: flex;
+    position: absolute;
+    left:45%;
+    top: 1.5em;
+}
+
+select {
+    background-color: linear-gradient(to right top, whitesmoke, white);
+    padding: 10px 10px;
+    border-radius: 10px;
+    font-size: 15px;
+    border: none;
+    -webkit-box-shadow: 0px 0px 10px 0px rgba(125, 125, 125, 0.4);
+    -moz-box-shadow: 0px 0px 10px 0px rgba(125,125,125,0.4);
+    box-shadow: 0px 0px 10px 0px rgba(125,125,125,0.4);
+    width: 150px;
+    outline: 0;
+
+}
+
+option {
+    font-size: 15px;
+}
+
+
 
 .btn-top {
     display: none;
@@ -148,3 +177,15 @@ img {
     opacity: 1;
     cursor: pointer;
 }
+
+.load-div-container {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    animation: fadein 0.5s;
+    background-color: white;
+    z-index: 2;
+}
+

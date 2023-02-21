@@ -22,7 +22,7 @@ def conectar(usuário, senha):
                 uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
                 client = MongoClient(uri,
                         tls=True,
-                        tlsCertificateKeyFile='C:/Users/Marco/Desktop/CorrAut 2023/Github/X509-cert-5893113880491433274.pem',
+                        tlsCertificateKeyFile='X509-cert-5893113880491433274.pem',
                         server_api=ServerApi('1'))
             else:
                 client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
@@ -121,22 +121,28 @@ def atualizarNota(nome, ano, matéria, período, nota):
         atualizarNota(nome, ano, matéria, período, nota)
 
 
-def calcularMediaTurma(turma, anoPesquisa, matéria, período):
+def calcularMediaTurma(turma, anoPesquisa, matéria):
     global db
-    alunos = db.Alunos.find({"turma":turma})
-    ano = anoPesquisa
-    alunosContabilizados = 0
-    soma = 0
-    for aluno in alunos:
-        nota = aluno["histórico"][ano][matéria][período]
-        if nota != -1:
-            soma += aluno["histórico"][ano][matéria][período]
-            alunosContabilizados += 1
-    try:
-        média = soma/alunosContabilizados
-    except:
-        return "ERRO: TURMA NÃO ENCONTRADA"
-    return média
+
+    médias = []
+    
+    for período in ["1º", "2º", "3º", "4º"]:
+        alunos = db.Alunos.find({"turma":turma})
+        ano = anoPesquisa
+        alunosContabilizados = 0
+        soma = 0
+        for aluno in alunos:
+            nota = aluno["histórico"][ano][matéria][período]
+            if nota != -1:
+                soma += aluno["histórico"][ano][matéria][período]
+                alunosContabilizados += 1
+        try:
+            média = soma/alunosContabilizados
+            médias.append(média)
+        except:
+            médias.append(0)
+
+    return médias
 
     
 

@@ -4,35 +4,58 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styledashboard.css">
-    <script defer src="dashboard.js"></script>
+
+    {% load static %}
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://kit.fontawesome.com/97ae76578e.js" crossorigin="anonymous"></script>
+    <link href="{% static "dashboard/styledashboard.css" %}" rel="stylesheet">
+    <script>
+        const dados = {{dados}};
+        var labels = "{{labels}}";
+        var turma = "{{turma}}";
+    </script>
+    <script defer src="{% static "dashboard/dashboard.js" %}"></script>
     <title>Dashboard</title>
 </head>
+
 <body>
     <header>
         <nav>
+            <div class="select">
+                <select name="Matéria" id="Matéria" required value="Matéria">
+                    {% comment "" %}
+                        <option value="" disabled selected hidden>Matéria</option>
+                    {% endcomment %} 
+                    <option value="Matemática">Matemática</option>
+                </select>
+                
+            </div>
             <ul class="buttons-header">
                 <li>
                     <div class="backAndLogo">
-                        <abbr title="Voltar">
-                            <button class="btn-back">
+                        <abbr title="Voltar para seleção de turmas">
+                            <button class="btn-back" onclick="Red('turmas')">
                                 <i class="fa-solid fa-arrow-left"></i>
                             </button>
                         </abbr>
-                        <img src="imagens/logo-corraut.png" alt="logo corraut">
+                        <img src="{% static "dashboard/logo-corraut.png" %}"" alt="logo corraut">
+                        
                     </div>
                 </li>
-                <li><button class="btn-newEvaluation">Nova Avaliação</button></li>
+                <li><button class="btn-newEvaluation" onclick="Red('cadastro')" alt="Nova Avaliação">Nova Avaliação</button></li>
             </ul>
         </nav>
     </header>
+
     <main class="main-container">
 
         <section class="chartMedia-container">
             <canvas id="chartMedia"></canvas>
         </section>
 
-        <section class="chartAcertos-container">
+        <section class={{acertosClass}}>
             <canvas id="chartAcertos"></canvas>
         </section>
         
@@ -43,9 +66,13 @@
             <i class="fa-solid fa-arrow-up"></i>
         </button>
     </abbr>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://kit.fontawesome.com/97ae76578e.js" crossorigin="anonymous"></script>
+
+    <div class="load-div-container" id="load-div-container">
+        <div class="load-div" id="load-div">
+            <span class="loader"></span>
+        </div>
+    </div>
+
       
 </body>
 </html>

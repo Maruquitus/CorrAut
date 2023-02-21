@@ -48,47 +48,75 @@ def login(request):
         
     return render(request, 'login.html')
 
-def cadgab(request):
+def dashboard(request):
+    global db
     global turmas
     if request.method == 'GET':
+        k = request.COOKIES.keys()
         try:
-            t = int(request.GET["turma"])
-            t = turmas[t]
-            t = formatarDict(t)
-            if "questoes" in request.GET.keys():
-                quant = int(request.GET["questoes"])
-                return render(request, "cadgab.html", {'questões':range(1, quant+1), 'quant':quant, 'curso':t['curso'], 'série':t['série'], 'ícone': ícones[t['curso']]})
+            if "turma" in k:
+                turma = turmas[int(request.COOKIES["turma"])]
+                cursoturma = turma["curso"]
+                serieturma = turma["série"]
+                import database as d
+                try: 
+                    #request.COOKIES["materia"]
+                    #CONSIDERANDO SÓ NOTAS DO 1º, MUDAR DEPOIS
+                    #dados = d.calcularMediaTurma(f"{cursoturma} {serieturma}º ANO", {serieturma}, request.COOKIES["materia"]) 
+                    dados = d.calcularMediaTurma(f"{cursoturma.upper()} {serieturma}º ANO", "1º", "Matemática") 
+                except:
+                    dados = [0, 0, 0, 0]
+                return render(request, 'dashboard.html', {"dados":dados, "acertosClass":"chartAcertos-container" if "ultimaAvaliacao" in k or dados == [0, 0, 0, 0] else "chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
             else:
-                print(ícones[t['curso']])
-                return render(request, "cadgab.html", {'questões':range(1, 11), 'quant':10, 'curso':t['curso'], 'série':t['série'], 'ícone': ícones[t['curso']]})
-        except Exception as e:
-            print(traceback.format_exc())
+                return render(request, 'dashboard.html', {"dados":[20, 45, 49, 20], "labels":[f"{n}º" for n in range(1, 10+1)], "acertosClass":"chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
+        except:
             return HttpResponseRedirect(f'/login/?erro=4')
+            
 
-def turmasPag(request):
-    global db, usuario, turmas
+def viewCookies(request):
+    k = request.GET.keys()
+    k = list(k)
+    lista = ""
+    print(k)
+    for i in k:
+        lista += i + " = " + str(request.GET[i]) + "\n"
+    response = HttpResponse(lista)
+    return response
+
+def setCookie(request):
+    response = HttpResponse("Cookie Setado")
+    k = list(request.GET.keys())
+    if len(k) > 0:
+        response.set_cookie(k[0], request.GET[k[0]])
+    return response  
+
+def cadgab(request):
+    global turmas, db
     if request.method == 'GET':
         try:
-            type(usuario)
-            usuárioDados = db.Usuários.find({"usuário":usuario})[0]
-            turmas = []
-            ind = 0
-            if usuárioDados['turmas'] != ["*"]:
-                for tt in db.Turmas.find().sort([("série", pymongo.ASCENDING)]):
-                    t = formatarDict(tt)
-                    print(t)
-                    tAtual = f"{t['curso']} {t['série']}".upper()
-                    print(tAtual, usuárioDados['turmas'])
-                    if tAtual in usuárioDados['turmas']:
-                        turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']], "add": "enabled", "id":ind})
-                    else:
-                        turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']], "add": "disabled", "id":ind})
-                    ind += 1
-            else:
-                for tt in db.Turmas.find().sort([("série", pymongo.ASCENDING)]):
-                    t = formatarDict(tt)
-                    turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']],"add": "", "id":ind})
-                    ind += 1
+            t = formatarDict(turmas[int(request.COOKIES['turma'])])
+            quant = int(request.COOKIES['questoes']) if "questoes" in request.COOKIES.keys() else 10
+            return render(request, "cadgab.html", {'questões':range(1, quant+1), 'quant':quant, 'curso':t['curso'], 'série':t['série'], 'ícone': ícones[t['curso']]})
+        except:
+            return HttpResponseRedirect(f'/login/?erro=4')
+
+def calcularTurmas(db):
+    turmas = []
+    ind = 0
+    usuárioDados = db.Usuários.find({"usuário":usuario})[0]
+    for tt in db.Turmas.find().sort([("série", pymongo.ASCENDING)]):
+        t = formatarDict(tt)
+        tAtual = f"{t['curso']} {t['série']}".upper()
+        turmas.append({"curso": t['curso'], "série": t['série'], "ícone":ícones[t['curso']], "add": "enabled" if tAtual in usuárioDados['turmas'] or usuárioDados['turmas'] == ["*"] else "disabled", "id":ind})
+        ind += 1
+    return turmas
+
+def turmasPag(request):
+    global db, turmas
+    if request.method == 'GET':
+        try:
+            usuario = request.COOKIES["usuario"]
+            turmas = calcularTurmas(db)
 
             return render(request, "turmas.html", {'usuario':usuario, '1º':turmas[0:4], "2º":turmas[4:8], "3º":turmas[8:12]})
         except Exception as e:
@@ -100,13 +128,16 @@ def turmasPag(request):
 def checar(request):
     global db, usuario
     if request.method == 'POST' and 'usuário' in request.POST:
+        response = HttpResponseRedirect('/turmas/')
         usuario = request.POST["usuário"]
+
         senha = request.POST["senha"]
 
         import database as d
         db = d.conectar(usuario, senha)
         if not isinstance(db, str):
-            return HttpResponseRedirect('/turmas/')
+            response.set_cookie("usuario", usuario)
+            return response
         else:
             erro = db.replace("ERRO: ", "")
             db = None

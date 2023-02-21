@@ -7,21 +7,20 @@
     {% load static %}
     
     <link href="{% static "cad-gab/stylecadbag.css" %}" rel="stylesheet">
-    <script src="{% static "cad-gab/script.js" %}"></script>
+    <script src="{% static "cad-gab/cad-gab.js" %}"></script>
     <title>Cadastro de Gabarito | CorrAut</title>
 </head>
 <body>
-    
-    <form action="/turmas"><button class={{curso}} id="indicador-turma"><i class="fa-solid fa-arrow-right"> </i>&nbsp;<p><i class={{ícone}}></i>{{curso}} {{série}}º Ano<p></button></form>
+    <button class={{curso}} id="indicador-turma" onclick="Red('turmas')">
+        <i class="fa-solid fa-arrow-right"> </i>&nbsp;<p><i class={{ícone}}></i>{{curso}} {{série}}º Ano<p>
+    </button>
     <main class="main-container">
         <div class="image-gabarito">
             <img src="{% static "cad-gab/gabarito.jpg" %}" alt="foto gabarito">
             <abbr title="Voltar">
-                <a href="/login/">
-                    <button type="button" class="btn-back">
+                    <button type="button" class="btn-back" onclick="Red('dashboard')">
                         <i class="fa-solid fa-arrow-left"></i>
                     </button>
-                </a>
             </abbr>
         </div>
         <form>
