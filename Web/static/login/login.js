@@ -1,6 +1,6 @@
 function ativacaoBotao(){
 
-  if(!document.getElementById('senha').value.length || !document.getElementById('usuário').value.length){
+  if(!document.getElementById('senha').value.length || !document.getElementById('usuário').value.length  || senha.value.length < 8){
       document.getElementById("entrar").disabled = true;            
   }
   else{
@@ -14,7 +14,7 @@ var func = function() {
   var usuário = document.getElementById("usuário");
   let style = window.getComputedStyle(usuário, "");
   let style2 = window.getComputedStyle(senha, "");
-  if (style.backgroundColor !== "rgb(245, 245, 245)" && style2.backgroundColor !== "rgb(245, 245, 245)") {
+  if (style.backgroundColor !== "rgb(245, 245, 245)" && style2.backgroundColor !== "rgb(245, 245, 245)" && senha.value.length >= 8) {
       document.getElementById("entrar").disabled = false;
   }
 }

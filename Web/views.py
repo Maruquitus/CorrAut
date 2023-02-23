@@ -66,7 +66,7 @@ def dashboard(request):
                     dados = d.calcularMediaTurma(f"{cursoturma.upper()} {serieturma}º ANO", "1º", "Matemática") 
                 except:
                     dados = [0, 0, 0, 0]
-                return render(request, 'dashboard.html', {"dados":dados, "acertosClass":"chartAcertos-container" if "ultimaAvaliacao" in k or dados == [0, 0, 0, 0] else "chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
+                return render(request, 'dashboard.html', {"dados":dados, "acertosClass":"chartAcertos-container" if "ultimaAvaliacao" in k and dados != [0, 0, 0, 0] else "chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
             else:
                 return render(request, 'dashboard.html', {"dados":[20, 45, 49, 20], "labels":[f"{n}º" for n in range(1, 10+1)], "acertosClass":"chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
         except:

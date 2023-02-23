@@ -22,7 +22,7 @@ def conectar(usuário, senha):
                 uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
                 client = MongoClient(uri,
                         tls=True,
-                        tlsCertificateKeyFile='X509-cert-5893113880491433274.pem',
+                        tlsCertificateKeyFile='auth.pem',
                         server_api=ServerApi('1'))
             else:
                 client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
@@ -35,7 +35,10 @@ def conectar(usuário, senha):
             if usuário != "ADMIN":
                 senha = senha.encode('utf-8')
                 print(db.Usuários.find({"usuário":usuário}))
-                if not bcrypt.checkpw(senha, db.Usuários.find({"usuário":usuário})[0]['senha']):
+                try:
+                    if not bcrypt.checkpw(senha, db.Usuários.find({"usuário":usuário})[0]['senha']):
+                        return "ERRO: 1"
+                except:
                     return "ERRO: 1"
 
             try:

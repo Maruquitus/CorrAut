@@ -1,4 +1,5 @@
 var turma;
+
 var tr = function() {
     var url = window.location.href.toString();
     if (document.cookie) {
