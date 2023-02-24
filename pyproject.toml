@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "CorrAut"
+version = "0.1.0"
+description = ""
+authors = ["Maruquitus <killerredstone1@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+django = "3.2"
+whitenoise = {extras = ["brotli"], version = "^6.3.0"}
+gunicorn = "^20.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
