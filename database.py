@@ -21,21 +21,18 @@ def conectar(usuário, senha=-1, si=-1):
             try:
                 print(db)
             except:
-                if usuário != "ADMIN":
-                    uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
-                    client = MongoClient(uri,
-                            tls=True,
-                            tlsCertificateKeyFile='auth.pem',
-                            server_api=ServerApi('1'))
-                else:
-                    client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+                uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+                client = MongoClient(uri,
+                        tls=True,
+                        tlsCertificateKeyFile='auth.pem',
+                        server_api=ServerApi('1'))
                 db = client.Database
 
             "OperationFailure" #Credenciais erradas
             "ServerSelectionTimeoutError" #IP não adicionado
             #"ConfigurationError" #Sem internet
 
-            if usuário != "ADMIN" and senha != -1:
+            if senha != -1:
                 senha = senha.encode('utf-8')
                 print(db.Usuários.find({"usuário":usuário}))
                 try:
@@ -43,7 +40,7 @@ def conectar(usuário, senha=-1, si=-1):
                         return "ERRO: 1"
                 except:
                     return "ERRO: 1"
-            else:
+            if si != -1:
                 if db.Usuários.find({"usuário":usuário})[0]['sessãoAtual'] != si:
                     return "ERRO: 6"
 
@@ -140,7 +137,13 @@ def calcularMediaTurma(turma, anoPesquisa, matéria):
         alunosContabilizados = 0
         soma = 0
         for aluno in alunos:
-            nota = aluno["histórico"][ano][matéria][período]
+            try:
+                nota = aluno["histórico"][ano][matéria][período]
+            except:
+                atualizarNota(aluno["nome"], ano, matéria, período, -1)
+                calcularMediaTurma(turma, anoPesquisa, matéria)
+                break
+                #nota = aluno["histórico"][ano][matéria][período]
             if nota != -1:
                 soma += aluno["histórico"][ano][matéria][período]
                 alunosContabilizados += 1

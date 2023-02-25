@@ -15,6 +15,7 @@
         const dados = {{dados}};
         var labels = "{{labels}}";
         var turma = "{{turma}}";
+        var ind = {{ind}};
     </script>
     <script defer src="{% static "dashboard/dashboard.js" %}"></script>
     <title>Dashboard</title>
@@ -24,11 +25,14 @@
     <header>
         <nav>
             <div class="select">
-                <select name="Matéria" id="Matéria" required value="Matéria">
+                <select name="Matéria" id="Matéria" required value="Matéria" onChange="atualizar(this.selectedIndex);">
                     {% comment "" %}
                         <option value="" disabled selected hidden>Matéria</option>
                     {% endcomment %} 
-                    <option value="Matemática">Matemática</option>
+                    {% for mat in matérias %}
+                        <option value="{{mat}}">{{mat}}</option>
+                    {% endfor %}
+                    
                 </select>
                 
             </div>

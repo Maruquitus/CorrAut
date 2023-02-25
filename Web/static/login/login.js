@@ -1,5 +1,4 @@
 function ativacaoBotao(){
-
   if(!document.getElementById('senha').value.length || !document.getElementById('usuário').value.length  || senha.value.length < 8){
       document.getElementById("entrar").disabled = true;            
   }

@@ -127,6 +127,25 @@ btnTop.addEventListener('click', function backToTop() {
 
 document.addEventListener('scroll', showBtnTop)
 
+var atualizar = function(selecionado=-1) {
+    if (selecionado == -1) {
+        let select = document.getElementById("Matéria");
+        select.selectedIndex = ind;
+        selecionado = ind;
+    }
+    else
+    {
+        document.cookie = "materia=" + selecionado + ";path=/";
+        location.reload();
+    }
+    
+    
+}
+
+window.onload = function() {
+    setTimeout(atualizar, 500);
+  }
+
 function showBtnTop() {
     if (window.scrollY > 50) {
         btnTop.style.display = 'block'
@@ -139,6 +158,7 @@ var destination;
 
 var tr = function() {
     var url = window.location.href.toString();
+    document.cookie = "materia=0" + ";path=/";
     window.location.href = url.replace("dashboard", destination);
 }
 
