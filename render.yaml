@@ -3,7 +3,7 @@ services:
     name: CorrAut
     env: python
     buildCommand: "./build.sh"
-    startCommand: "gunicorn Web.wsgi"
+    startCommand: "gunicorn Web.wsgi:application"
     envVars:
       - key: SECRET_KEY
         generateValue: true
