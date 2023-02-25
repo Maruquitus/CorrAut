@@ -4,6 +4,7 @@ import pymongo
 import traceback
 from string import capwords
 import database as d
+import secrets
 
 
 ícones = {
@@ -13,13 +14,6 @@ import database as d
     "Agroindústria":"fa-solid fa-tractor",
     "Vestuário": "fa-solid fa-shirt"
 }
-
-def checarDb(usuario):
-    global db
-    try:
-        print(db)
-    except:
-        db = d.conectar(usuario)
 
 def formatarDict(dict):
     for k in dict.keys():
@@ -36,8 +30,33 @@ def formatarArray(array):
         ind += 1
     return a
 
+def erro(e):
+    return HttpResponseRedirect(f'/login/?erro={e}')
 
-def redirect(request):
+def val(request):
+    global db
+    
+    usuario = request.COOKIES["usuario"]
+
+    #Checar se o cookie do sessionID não expirou 
+    try:
+        sessionID = request.COOKIES["sessionid"]
+    except:
+        return 6
+    
+    #Checar se o sessionID bate
+    try:
+        if db.Usuários.find({"usuário":usuario})[0]['sessãoAtual'] != sessionID:
+            return 6
+    except:
+        db = d.conectar(usuario, si=sessionID)
+        if isinstance(db, str):
+            return int(db.replace("ERRO: ", ""))
+
+    #Se nada der errado, retornar informações
+    return usuario
+
+def redirect():
     return HttpResponseRedirect(f'/login/')
 
 def login(request):
@@ -48,7 +67,8 @@ def login(request):
                 "2": "IP bloqueado, fale com um administrador.",
                 "3": "Conecte-se à internet e tente novamente.",
                 "4": "Algo deu errado, tente novamente.",
-                "5": "Usuário / senha não podem estar vazios!"
+                "5": "Usuário / senha não podem estar vazios!",
+                "6": "Sua sessão expirou, entre novamente."
             }
             erro = erros[request.GET["erro"]]
             return render(request, 'login.html', {"msgErro":erro})
@@ -58,8 +78,11 @@ def login(request):
 
 def dashboard(request):
     global db
-    usuario = request.COOKIES["usuario"]
-    checarDb(usuario)
+    
+    #Validar o request (checar db e sessionID)
+    v = val(request)
+    if isinstance(v, int):    return v
+    else:   usuario = v
 
     if request.method == 'GET':
         k = request.COOKIES.keys()
@@ -80,30 +103,23 @@ def dashboard(request):
             else:
                 return render(request, 'dashboard.html', {"dados":[20, 45, 49, 20], "labels":[f"{n}º" for n in range(1, 10+1)], "acertosClass":"chartAcertosDisabled-container", "turma":f"{cursoturma} {serieturma}º Ano"})
         except:
-            return HttpResponseRedirect(f'/login/?erro=4')
+            return erro(4)
             
-
-def viewCookies(request):
-    k = request.GET.keys()
-    k = list(k)
-    lista = ""
-    print(k)
-    for i in k:
-        lista += i + " = " + str(request.GET[i]) + "\n"
-    response = HttpResponse(lista)
-    return response
-
+"""
 def setCookie(request):
     response = HttpResponse("Cookie Setado")
     k = list(request.GET.keys())
     if len(k) > 0:
         response.set_cookie(k[0], request.GET[k[0]])
     return response  
-
+"""
+    
 def cadgab(request):
     global db
-    usuario = request.COOKIES["usuario"]
-    checarDb(usuario)
+    #Validar o request (checar db e sessionID)
+    v = val(request)
+    if isinstance(v, int):    return v
+    else:   usuario = v
 
     turmas = calcularTurmas(db, usuario)
 
@@ -113,7 +129,7 @@ def cadgab(request):
             quant = int(request.COOKIES['questoes']) if "questoes" in request.COOKIES.keys() else 10
             return render(request, "cadgab.html", {'questões':range(1, quant+1), 'quant':quant, 'curso':t['curso'], 'série':t['série'], 'ícone': ícones[t['curso']]})
         except:
-            return HttpResponseRedirect(f'/login/?erro=4')
+            return erro(4)
 
 def calcularTurmas(db, usuario):
     turmas = []
@@ -128,19 +144,18 @@ def calcularTurmas(db, usuario):
 
 def turmasPag(request):
     global db
-    usuario = request.COOKIES["usuario"]
-    checarDb(usuario)
-
+    #Validar o request (checar db e sessionID)
+    v = val(request)
+    if isinstance(v, int):    return v
+    else:   usuario = v
+    
     if request.method == 'GET':
         try:
             usuario = request.COOKIES["usuario"]
             turmas = calcularTurmas(db, usuario)
             return render(request, "turmas.html", {'usuario':usuario, '1º':turmas[0:4], "2º":turmas[4:8], "3º":turmas[8:12]})
-        except Exception as e:
-            print(traceback.format_exc())
-            return HttpResponseRedirect(f'/login/?erro=4')
-
-
+        except:
+            return erro(4)
 
 def checar(request):
     global db
@@ -154,11 +169,15 @@ def checar(request):
         db = d.conectar(usuario, senha)
         if not isinstance(db, str):
             response.set_cookie("usuario", usuario)
+            si = secrets.token_hex(24)
+            response.set_cookie("sessionid", si , max_age=(60**2)*2)
+
+            d.atualizarUsuario(usuario, "sessãoAtual", si)
             return response
         else:
-            erro = db.replace("ERRO: ", "")
+            e = db.replace("ERRO: ", "")
             db = None
-            return HttpResponseRedirect(f'/login/?erro={erro}')
+            return erro(e)
             
     
     return render(request, 'login.html')

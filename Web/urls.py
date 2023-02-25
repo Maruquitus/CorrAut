@@ -13,6 +13,5 @@ urlpatterns = [
     path('turmas/', views.turmasPag, name="turmas"),
     path('cadastro/', views.cadgab, name="cadastroGab"),
     path('dashboard/', views.dashboard, name="dashboard"),
-    path('setCookie/', views.setCookie, name="setCookie"),
-    path('viewCookies/', views.viewCookies, name="viewCookies")
+    #path('setCookie/', views.setCookie, name="setCookie")
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

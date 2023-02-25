@@ -12,7 +12,7 @@ def testarInternet(host='http://google.com'):
     except:
         return False
 
-def conectar(usuário, senha=-1):
+def conectar(usuário, senha=-1, si=-1):
     global db
     temInternet = testarInternet()
 
@@ -43,6 +43,9 @@ def conectar(usuário, senha=-1):
                         return "ERRO: 1"
                 except:
                     return "ERRO: 1"
+            else:
+                if db.Usuários.find({"usuário":usuário})[0]['sessãoAtual'] != si:
+                    return "ERRO: 6"
 
             try:
                 print(db.Alunos.list_indexes())
@@ -91,7 +94,7 @@ def novoUsuario(usuario, senha):
     senha = senha.encode('utf-8')
     hashed = bcrypt.hashpw(senha, bcrypt.gensalt(10)) 
     
-    db.Usuários.insert_one({"usuário":usuario.upper(), "turmas": [], "senha":hashed, "matérias": []})
+    db.Usuários.insert_one({"usuário":usuario.upper(), "turmas": [], "senha":hashed, "matérias": [], "sessãoAtual":b""})
 
 def atualizarUsuario(usuario, atualizar, valor):
     global db
@@ -125,7 +128,6 @@ def atualizarNota(nome, ano, matéria, período, nota):
         hist[ano][matéria] = {"1º":-1, "2º":-1, "3º":-1, "4º":-1}
         db.Alunos.update_one({"nome":nome.upper()}, {"$set":{"histórico":hist}})
         atualizarNota(nome, ano, matéria, período, nota)
-
 
 def calcularMediaTurma(turma, anoPesquisa, matéria):
     global db
