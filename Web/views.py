@@ -56,7 +56,7 @@ def val(request):
     #Se nada der errado, retornar informações
     return usuario
 
-def redirect():
+def redirect(request):
     return HttpResponseRedirect(f'/login/')
 
 def login(request):
@@ -81,7 +81,7 @@ def dashboard(request):
     
     #Validar o request (checar db e sessionID)
     v = val(request)
-    if isinstance(v, int):    return v
+    if isinstance(v, int):    return erro(v)
     else:   usuario = v
 
     if request.method == 'GET':
@@ -118,7 +118,7 @@ def cadgab(request):
     global db
     #Validar o request (checar db e sessionID)
     v = val(request)
-    if isinstance(v, int):    return v
+    if isinstance(v, int):    return erro(v)
     else:   usuario = v
 
     turmas = calcularTurmas(db, usuario)
@@ -146,7 +146,7 @@ def turmasPag(request):
     global db
     #Validar o request (checar db e sessionID)
     v = val(request)
-    if isinstance(v, int):    return v
+    if isinstance(v, int):    return erro(v)
     else:   usuario = v
     
     if request.method == 'GET':

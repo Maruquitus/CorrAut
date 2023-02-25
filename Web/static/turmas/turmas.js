@@ -22,5 +22,15 @@ function Red(t) {
     turma = t;
     
     document.getElementById("load-div-container").style.display = "flex";
-    setTimeout(tr, 1000);
+    setTimeout(tr, 500);
+}
+
+var lr = function() {
+    var url = window.location.href.toString();
+    window.location.href = url.replace("turmas", "login");
+}
+
+function back() {
+    document.getElementById("load-div-container").style.display = "flex";
+    setTimeout(lr, 500);
 }
