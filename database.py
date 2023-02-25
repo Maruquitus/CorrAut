@@ -18,15 +18,18 @@ def conectar(usuário, senha):
 
     if temInternet:
         try:
-            if usuário != "ADMIN":
-                uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
-                client = MongoClient(uri,
-                        tls=True,
-                        tlsCertificateKeyFile='auth.pem',
-                        server_api=ServerApi('1'))
-            else:
-                client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
-            db = client.Database
+            try:
+                print(db)
+            except:
+                if usuário != "ADMIN":
+                    uri = f"mongodb+srv://corraut-db.7j5ar0f.mongodb.net/?authSource=%24external&authMechanism=MONGODB-X509&retryWrites=true&w=majority"
+                    client = MongoClient(uri,
+                            tls=True,
+                            tlsCertificateKeyFile='auth.pem',
+                            server_api=ServerApi('1'))
+                else:
+                    client = MongoClient(f"mongodb+srv://{usuário}:{urllib.parse.quote_plus(senha)}@corraut-db.7j5ar0f.mongodb.net/?retryWrites=true&w=majority", server_api=ServerApi('1'))
+                db = client.Database
 
             "OperationFailure" #Credenciais erradas
             "ServerSelectionTimeoutError" #IP não adicionado
