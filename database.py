@@ -12,7 +12,7 @@ def testarInternet(host='http://google.com'):
     except:
         return False
 
-def conectar(usuário, senha):
+def conectar(usuário, senha=-1):
     global db
     temInternet = testarInternet()
 
@@ -35,7 +35,7 @@ def conectar(usuário, senha):
             "ServerSelectionTimeoutError" #IP não adicionado
             #"ConfigurationError" #Sem internet
 
-            if usuário != "ADMIN":
+            if usuário != "ADMIN" and senha != -1:
                 senha = senha.encode('utf-8')
                 print(db.Usuários.find({"usuário":usuário}))
                 try:

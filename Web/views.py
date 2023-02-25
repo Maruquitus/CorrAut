@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 import pymongo
 import traceback
 from string import capwords
+import database as d
 
 
 ícones = {
@@ -12,6 +13,13 @@ from string import capwords
     "Agroindústria":"fa-solid fa-tractor",
     "Vestuário": "fa-solid fa-shirt"
 }
+
+def checarDb(usuario):
+    global db
+    try:
+        print(db)
+    except:
+        db = d.conectar(usuario)
 
 def formatarDict(dict):
     for k in dict.keys():
@@ -50,15 +58,17 @@ def login(request):
 
 def dashboard(request):
     global db
-    turmas = calcularTurmas(db, request)
+    usuario = request.COOKIES["usuario"]
+    checarDb(usuario)
+
     if request.method == 'GET':
         k = request.COOKIES.keys()
         try:
+            turmas = calcularTurmas(db, usuario)
             if "turma" in k:
                 turma = turmas[int(request.COOKIES["turma"])]
                 cursoturma = turma["curso"]
                 serieturma = turma["série"]
-                import database as d
                 try: 
                     #request.COOKIES["materia"]
                     #CONSIDERANDO SÓ NOTAS DO 1º, MUDAR DEPOIS
@@ -92,7 +102,10 @@ def setCookie(request):
 
 def cadgab(request):
     global db
-    turmas = calcularTurmas(db, request)
+    usuario = request.COOKIES["usuario"]
+    checarDb(usuario)
+
+    turmas = calcularTurmas(db, usuario)
 
     if request.method == 'GET':
         try:
@@ -102,8 +115,7 @@ def cadgab(request):
         except:
             return HttpResponseRedirect(f'/login/?erro=4')
 
-def calcularTurmas(db, request):
-    usuario = request.COOKIES["usuario"]
+def calcularTurmas(db, usuario):
     turmas = []
     ind = 0
     usuárioDados = db.Usuários.find({"usuário":usuario})[0]
@@ -116,10 +128,13 @@ def calcularTurmas(db, request):
 
 def turmasPag(request):
     global db
+    usuario = request.COOKIES["usuario"]
+    checarDb(usuario)
+
     if request.method == 'GET':
         try:
             usuario = request.COOKIES["usuario"]
-            turmas = calcularTurmas(db, request)
+            turmas = calcularTurmas(db, usuario)
             return render(request, "turmas.html", {'usuario':usuario, '1º':turmas[0:4], "2º":turmas[4:8], "3º":turmas[8:12]})
         except Exception as e:
             print(traceback.format_exc())
@@ -129,13 +144,13 @@ def turmasPag(request):
 
 def checar(request):
     global db
+
     if request.method == 'POST' and 'usuário' in request.POST:
         response = HttpResponseRedirect('/turmas/')
         usuario = request.POST["usuário"]
 
         senha = request.POST["senha"]
 
-        import database as d
         db = d.conectar(usuario, senha)
         if not isinstance(db, str):
             response.set_cookie("usuario", usuario)
