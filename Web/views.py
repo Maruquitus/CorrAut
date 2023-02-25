@@ -50,7 +50,7 @@ def login(request):
 
 def dashboard(request):
     global db
-    global turmas
+    turmas = calcularTurmas(db, request)
     if request.method == 'GET':
         k = request.COOKIES.keys()
         try:
@@ -91,7 +91,9 @@ def setCookie(request):
     return response  
 
 def cadgab(request):
-    global turmas, db
+    global db
+    turmas = calcularTurmas(db, request)
+
     if request.method == 'GET':
         try:
             t = formatarDict(turmas[int(request.COOKIES['turma'])])
@@ -100,7 +102,8 @@ def cadgab(request):
         except:
             return HttpResponseRedirect(f'/login/?erro=4')
 
-def calcularTurmas(db):
+def calcularTurmas(db, request):
+    usuario = request.COOKIES["usuario"]
     turmas = []
     ind = 0
     usuárioDados = db.Usuários.find({"usuário":usuario})[0]
@@ -112,12 +115,11 @@ def calcularTurmas(db):
     return turmas
 
 def turmasPag(request):
-    global db, turmas
+    global db
     if request.method == 'GET':
         try:
             usuario = request.COOKIES["usuario"]
-            turmas = calcularTurmas(db)
-
+            turmas = calcularTurmas(db, request)
             return render(request, "turmas.html", {'usuario':usuario, '1º':turmas[0:4], "2º":turmas[4:8], "3º":turmas[8:12]})
         except Exception as e:
             print(traceback.format_exc())
@@ -126,7 +128,7 @@ def turmasPag(request):
 
 
 def checar(request):
-    global db, usuario
+    global db
     if request.method == 'POST' and 'usuário' in request.POST:
         response = HttpResponseRedirect('/turmas/')
         usuario = request.POST["usuário"]
